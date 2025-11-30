@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tokyo Trip v7.0 | Color Cards</title>
+    <title>Tokyo Trip v7.1 | Color Cards Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -27,7 +27,7 @@
         }
         .container { width: 100%; max-width: 600px; padding-bottom: 120px; }
 
-        /* 導航切換 */
+        /* 切換按鈕 */
         .nav-switch { display: flex; background: #e6e6e6; border-radius: 30px; padding: 5px; margin-bottom: 20px; }
         .nav-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 25px; font-weight: bold; color: #999; cursor: pointer; transition: 0.3s; }
         .nav-btn.active { background: white; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -39,12 +39,13 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* 行程表 */
+        /* 天數 Tabs */
         .tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; scrollbar-width: none; }
         .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: #e6e6e6; color: #999; border: none; padding: 8px 16px; border-radius: 20px; white-space: nowrap; cursor: pointer; }
         .tab-btn.active { background: var(--primary-btn); color: white; }
 
+        /* 資訊卡片 */
         .day-info-card {
             background: white; border-radius: 20px; padding: 15px 20px; margin-bottom: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 10px;
@@ -57,20 +58,17 @@
 
         .weather-control { display: flex; gap: 8px; align-items: center; }
         .btn-fetch-weather { background: #f0f2f4; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 14px; }
-        
+
         .list-container { list-style: none; padding: 0; margin: 0; }
         
-        /* === 行程卡片樣式優化 === */
+        /* 行程卡片 (彩色版) */
         .trip-item {
-            background: white; /* 預設 */
-            border-radius: 16px; padding: 15px; margin-bottom: 12px;
+            background: white; border-radius: 16px; padding: 15px; margin-bottom: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02); position: relative; 
-            border-left: 6px solid #ddd;
-            transition: transform 0.2s;
+            border-left: 6px solid #ddd; transition: transform 0.2s;
         }
-        /* 讓輸入框背景半透明，融入卡片顏色 */
         .trip-item input, .trip-item select { background: rgba(255,255,255,0.5); border-radius: 4px; }
-        .trip-item .note-box { background: rgba(255,255,255,0.6); padding: 5px 10px; border-radius: 8px; }
+        .note-box { background: rgba(255,255,255,0.6); padding: 5px 10px; border-radius: 8px; margin-top: 5px; }
 
         /* 購物清單 */
         .shopping-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -95,10 +93,12 @@
         .shop-item.completed { opacity: 0.5; }
         .shop-item.completed .shop-name { text-decoration: line-through; }
 
+        /* 輸入框通用 */
         input, select { color: var(--text-main); font-family: inherit; border: 1px solid transparent; }
         input:focus { border-bottom: 1px solid var(--primary-btn); }
         .input-cost-sm { width: 60px; border: none; border-bottom: 1px dashed #999; text-align: right; }
         
+        /* 底部按鈕 */
         .bottom-bar {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
@@ -107,6 +107,7 @@
         }
         .action-btn { background: var(--primary-btn); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 500; cursor: pointer; }
 
+        /* 行程細節 */
         .item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .input-time { border: none; font-family: 'Playfair Display'; font-weight: bold; width: 60px; font-size: 1.1rem; }
         .btn-delete { position: absolute; top: 10px; right: 10px; border: none; background: none; color: #999; font-size: 1.2rem; cursor: pointer; z-index: 10; }
@@ -185,38 +186,40 @@
     <div class="bottom-bar" id="bottomBar"></div>
 
     <script>
-        // 設定分類樣式：border (左邊條) 和 bg (背景色)
+        // === 1. 設定 & 資料 ===
         const categoryStyles = {
-            'transport':   { border: '#8fa3ad', bg: '#f0f4f6', label: '交通' }, // 藍灰
-            'sightseeing': { border: '#a7bfa0', bg: '#f1f6f0', label: '景點' }, // 綠
-            'food':        { border: '#e0cc9e', bg: '#fbf8f1', label: '美食' }, // 黃
-            'shopping':    { border: '#d8b8b8', bg: '#f9f4f4', label: '逛街' }, // 粉
-            'hotel':       { border: '#bfaec2', bg: '#f7f4f8', label: '飯店' }, // 紫
-            'other':       { border: '#d1d1d1', bg: '#f9f9f9', label: '其他' }  // 灰
+            'transport':   { border: '#8fa3ad', bg: '#f0f4f6' }, // 藍
+            'sightseeing': { border: '#a7bfa0', bg: '#f1f6f0' }, // 綠
+            'food':        { border: '#e0cc9e', bg: '#fbf8f1' }, // 黃
+            'shopping':    { border: '#d8b8b8', bg: '#f9f4f4' }, // 粉
+            'hotel':       { border: '#bfaec2', bg: '#f7f4f8' }, // 紫
+            'other':       { border: '#d1d1d1', bg: '#f9f9f9' }  // 灰
         };
 
         const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
         let appData = {
             view: 'itinerary',
             currentDayIdx: 0,
             days: [{ date: "", weather: "☀️", temp: "", items: [{ id: 1, time: "10:00", category: "transport", location: "成田機場", cost: 0, currency: "JPY", note: "" }] }],
-            shoppingList: [
-                { id: 101, name: "合利他命", shop: "藥妝店", cost: 5500, bought: false, note: "幫媽媽買" }
-            ]
+            shoppingList: [ { id: 101, name: "合利他命", shop: "藥妝店", cost: 5500, bought: false, note: "幫媽媽買" } ]
         };
 
+        // === 2. 初始化 ===
         window.onload = () => {
-            const saved = localStorage.getItem('tokyo_trip_v7'); // Version 7
+            console.log("App Starting...");
+            const saved = localStorage.getItem('tokyo_trip_v7');
             if(saved) {
-                try { 
+                try {
                     const parsed = JSON.parse(saved);
                     appData = { ...appData, ...parsed };
                     if(!appData.shoppingList) appData.shoppingList = [];
-                } catch(e) { console.log('Reset data'); }
+                } catch(e) { console.error("Data Load Error", e); }
             }
             renderAll();
         };
 
+        // === 3. 視圖切換 ===
         function switchView(viewName) {
             appData.view = viewName;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -239,6 +242,7 @@
             save();
         }
 
+        // === 4. 行程表渲染 ===
         function renderTabs() {
             const c = document.getElementById('dayTabs');
             c.innerHTML = '';
@@ -274,7 +278,7 @@
                 const li = document.createElement('li');
                 li.className = 'trip-item';
                 
-                // 取得對應顏色樣式
+                // 套用彩色樣式
                 const style = categoryStyles[item.category] || categoryStyles['other'];
                 li.style.borderLeftColor = style.border;
                 li.style.backgroundColor = style.bg;
@@ -310,6 +314,7 @@
             });
         }
 
+        // === 5. 購物清單渲染 ===
         function renderShopping() {
             const list = document.getElementById('shopList');
             list.innerHTML = '';
@@ -339,6 +344,7 @@
             document.getElementById('shopTotal').innerText = shopTotal.toLocaleString();
         }
 
+        // === 6. 功能函式 ===
         function sortShopping() {
             appData.shoppingList.sort((a, b) => {
                 if(a.bought !== b.bought) return a.bought ? 1 : -1;
@@ -377,6 +383,7 @@
             finally { btn.innerHTML = '🔄'; }
         }
 
+        // 底部按鈕渲染
         function renderBottomBarItinerary() {
             document.getElementById('bottomBar').innerHTML = `
                 <button class="action-btn" onclick="addItem()">+ Add Item</button>
@@ -389,13 +396,41 @@
             `;
         }
 
+        // 資料增刪改
         function addItem() { appData.days[appData.currentDayIdx].items.push({id:Date.now(), time:"10:00", category:"other", location:"", cost:0, currency:"JPY", note:""}); renderAll(); }
         function updItem(i, k, v) { appData.days[appData.currentDayIdx].items[i][k] = v; renderAll(); }
         function delItem(i) { if(confirm('刪除?')) { appData.days[appData.currentDayIdx].items.splice(i,1); renderAll(); } }
+        
         function addDay() { appData.days.push({date:"", weather:"☀️", temp:"", items:[]}); appData.currentDayIdx = appData.days.length-1; renderAll(); }
         function updateDate() { appData.days[appData.currentDayIdx].date = document.getElementById('dateInput').value; renderAll(); }
         function updateWeather() { appData.days[appData.currentDayIdx].weather = document.getElementById('weatherSelect').value; appData.days[appData.currentDayIdx].temp = document.getElementById('tempInput').value; save(); }
+
         function addShop() { appData.shoppingList.push({id:Date.now(), name:"", shop:"", cost:0, bought:false, note:""}); renderAll(); }
         function toggleShop(i) { appData.shoppingList[i].bought = !appData.shoppingList[i].bought; renderAll(); }
         function updShop(i, k, v) { appData.shoppingList[i][k] = v; renderAll(); }
-        function delShop(i) { if(confirm('刪除商品?')) { appData.shoppingList.splice(i,1); renderAll();
+        function delShop(i) { if(confirm('刪除商品?')) { appData.shoppingList.splice(i,1); renderAll(); } }
+
+        function calcTotal() {
+            let jpy = 0; let twd = 0;
+            appData.days.forEach(d => d.items.forEach(i => {
+                if(i.currency === 'JPY') jpy += Number(i.cost);
+                if(i.currency === 'TWD') twd += Number(i.cost);
+            }));
+            appData.shoppingList.forEach(s => { if(s.bought) jpy += Number(s.cost); });
+            document.getElementById('totalJpy').innerText = jpy.toLocaleString();
+            document.getElementById('totalTwd').innerText = twd.toLocaleString();
+        }
+
+        // 地圖功能修正
+        function openMap(loc) { 
+            if(loc) {
+                // 使用標準 Google Maps Search URL
+                const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc);
+                window.open(url, '_blank');
+            }
+        }
+        
+        function save() { localStorage.setItem('tokyo_trip_v7', JSON.stringify(appData)); }
+    </script>
+</body>
+</html>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tokyo Trip v9.0 | Pro Layout</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Oswald:wght@500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <title>Tokyo Trip v10.0 | Hand-Drawn Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
             --text-main: #4a4a4a;
@@ -23,14 +23,11 @@
             margin: 0; padding: 20px;
             display: flex; justify-content: center;
             min-height: 100vh;
-
-            /* 日本氛圍背景 */
+            /* 背景圖：日本街道日落 */
             background-image: 
                 linear-gradient(to bottom, rgba(247, 247, 245, 0.85), rgba(247, 247, 245, 0.95)),
                 url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         .container { width: 100%; max-width: 600px; padding-bottom: 120px; }
@@ -52,63 +49,76 @@
         .tab-btn { background: rgba(230, 230, 230, 0.8); color: #999; border: none; padding: 8px 16px; border-radius: 20px; white-space: nowrap; cursor: pointer; backdrop-filter: blur(5px); }
         .tab-btn.active { background: var(--primary-btn); color: white; }
 
-        /* 資訊卡 */
+        /* === 資訊卡片 (手繪風改版區域) === */
         .day-info-card {
             background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 15px 20px; margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); backdrop-filter: blur(10px);
+            /* 改為水平排列 */
+            display: flex; flex-direction: row; justify-content: space-between; align-items: center;
         }
-        .info-row { display: flex; justify-content: space-between; align-items: center; }
-        .date-wrapper { display: flex; align-items: center; gap: 8px; }
-        .input-date { border: none; background: #f0f2f4; padding: 5px 10px; border-radius: 8px; font-family: 'Playfair Display', serif; font-size: 1rem; width: 140px; }
-        .weekday-badge { font-size: 0.8rem; background: #d8b8b8; color: white; padding: 4px 8px; border-radius: 6px; }
-        .weather-control { display: flex; gap: 8px; align-items: center; }
-        .btn-fetch-weather { background: #f0f2f4; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
 
+        /* 左側：日期 */
+        .header-left { display: flex; flex-direction: column; gap: 2px; }
+        .date-input-group { display: flex; align-items: baseline; gap: 5px; }
+        .input-date { 
+            border: none; background: transparent; font-family: 'Oswald', sans-serif; 
+            font-size: 1.5rem; font-weight: 600; color: #2c3e50; width: 155px;
+        }
+        .weekday-badge { 
+            font-family: 'Caveat', cursive; /* 手寫字型 */
+            font-size: 1.2rem; color: #aaa; margin-left: 5px;
+        }
+
+        /* 右側：手繪天氣 */
+        .header-right { display: flex; align-items: center; gap: 10px; }
+        .weather-icon-wrapper {
+            width: 50px; height: 50px; position: relative; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .weather-icon-wrapper:active { transform: scale(0.9); }
+        .weather-svg { width: 100%; height: 100%; filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1)); }
+        
+        .temp-input {
+            width: 50px; border: none; background: transparent; 
+            font-family: 'Caveat', cursive; font-size: 1.4rem; color: #666; text-align: right;
+        }
+        
+        /* 隱藏原本的 select，改用透明覆蓋在圖案上 */
+        .weather-select-hidden {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
+        }
+
+        /* 列表容器 */
         .list-container { list-style: none; padding: 0; margin: 0; }
 
-        /* === 9.0 行程卡片新設計 === */
+        /* === 行程卡片 === */
         .trip-item {
             background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 16px; margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; 
             border-left: 6px solid #ddd; transition: transform 0.2s; backdrop-filter: blur(5px);
         }
         
-        /* 第一行：時間 + 地點 (並排) */
-        .row-main {
-            display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
-        }
+        /* 時間 + 地點 */
+        .row-main { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        
+        /* === 24小時制優化 === */
         .input-time {
-            font-family: 'Oswald', sans-serif; /* 數字專用字型 */
-            font-size: 1.4rem; 
-            font-weight: 500;
-            color: var(--text-main);
-            width: 65px;
-            border: none;
-            background: transparent;
-            padding: 0;
-            margin-top: 2px; /* 微調對齊 */
+            font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 500;
+            color: var(--text-main); width: 60px; border: none; background: transparent; padding: 0;
         }
+        /* 嘗試隱藏瀏覽器預設的 AM/PM (針對 Webkit 核心) */
+        .input-time::-webkit-datetime-edit-ampm-field { display: none; }
+        
         .input-location {
-            flex-grow: 1;
-            font-size: 1.3rem; /* 放大字體 */
-            font-weight: 700;  /* 加粗 */
-            color: #2c3e50;
-            border: none;
-            background: transparent;
-            border-bottom: 1px dashed transparent;
-            transition: 0.3s;
-            padding: 2px 0;
+            flex-grow: 1; font-size: 1.3rem; font-weight: 700; color: #2c3e50;
+            border: none; background: transparent; border-bottom: 1px dashed transparent;
         }
         .input-location:focus { border-bottom-color: var(--primary-btn); }
-        .btn-delete {
-            color: #e0e0e0; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 0 0 10px;
-        }
+        .btn-delete { color: #e0e0e0; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 0 0 10px; }
         .btn-delete:hover { color: var(--danger); }
 
-        /* 第二行：分類 + 地圖 + 備註 + 金額 */
-        .row-meta {
-            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-        }
+        /* 第二行 */
+        .row-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
         .select-category {
             font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; border: none;
             background: rgba(0,0,0,0.05); color: #666; font-weight: 500; cursor: pointer;
@@ -153,7 +163,11 @@
             display: flex; gap: 15px; z-index: 100; border: 1px solid rgba(255,255,255,0.3);
         }
         .action-btn { background: var(--primary-btn); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 500; cursor: pointer; box-shadow: 0 5px 15px rgba(122, 139, 153, 0.3); }
-
+        
+        /* 隱藏更新按鈕 (因為現在可以直接點圖示) */
+        .btn-fetch-hidden { position: absolute; opacity: 0; pointer-events: none; }
+        
+        /* 總計 */
         .total-display { text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 30px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
         .total-display b { color: var(--text-main); font-size: 1rem; margin: 0 5px; }
     </style>
@@ -175,23 +189,26 @@
             <div class="tabs" id="dayTabs"></div>
 
             <div class="day-info-card">
-                <div class="info-row">
-                    <div class="date-wrapper">
+                <div class="header-left">
+                    <div class="date-input-group">
                         <input type="date" id="dateInput" class="input-date" onchange="updateDate()">
-                        <span id="weekdayBadge" class="weekday-badge">---</span>
+                        <button onclick="fetchWeather()" style="border:none; bg:transparent; font-size:0.8rem; cursor:pointer; color:#aaa;" title="更新天氣">↻</button>
                     </div>
-                    <button class="btn-fetch-weather" onclick="fetchWeather()" title="更新天氣">🔄</button>
+                    <div id="weekdayBadge" class="weekday-badge">Sunday</div>
                 </div>
-                <hr style="border:0; border-top:1px solid #f0f0f0; width:100%; margin: 8px 0;">
-                <div class="info-row">
-                    <div class="weather-control">
-                        <select id="weatherSelect" style="border:none; background:transparent; font-size:1.5rem;" onchange="updateWeather()">
-                            <option value="☀️">☀️</option><option value="☁️">☁️</option>
-                            <option value="🌧️">🌧️</option><option value="⛈️">⛈️</option><option value="🌨️">🌨️</option>
+
+                <div class="header-right">
+                    <div class="weather-icon-wrapper" id="weatherIconContainer">
+                        <div id="currentWeatherIcon"></div>
+                        <select id="weatherSelect" class="weather-select-hidden" onchange="updateWeather()">
+                            <option value="sunny">晴天</option>
+                            <option value="cloudy">多雲</option>
+                            <option value="rainy">下雨</option>
+                            <option value="storm">雷雨</option>
+                            <option value="snow">下雪</option>
                         </select>
-                        <input type="text" id="tempInput" style="width:60px; border:none; border-bottom:1px solid #eee; text-align:center; background:transparent !important;" placeholder="Temp" onchange="updateWeather()">
                     </div>
-                    <span style="font-size:0.8rem; color:#aaa"><span id="itemCount">0</span> spots</span>
+                    <input type="text" id="tempInput" class="temp-input" placeholder="20°" onchange="updateWeather()">
                 </div>
             </div>
 
@@ -223,14 +240,23 @@
     <div class="bottom-bar" id="bottomBar"></div>
 
     <script>
-        // === 1. 色彩設定 (更新: 咖啡色飯店、磚紅色景點) ===
+        // === 手繪風格 SVG 圖示庫 (Base64) ===
+        // 這些是我為你設計的手繪感圖案，直接嵌入代碼，不需要外部圖片
+        const svgIcons = {
+            'sunny': `<svg viewBox="0 0 100 100" fill="none" stroke="#f39c12" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="20" /><path d="M50 15v-10M50 95v-10M15 50H5M95 50H85M25 25L18 18M82 82l-7-7M25 75l-7 7M82 18l-7 7" /></svg>`,
+            'cloudy': `<svg viewBox="0 0 100 100" fill="none" stroke="#95a5a6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35-10 18 18 0 0 1 15 35h-50z" /></svg>`,
+            'rainy': `<svg viewBox="0 0 100 100" fill="none" stroke="#3498db" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35-10 18 18 0 0 1 15 35h-50z" stroke="#95a5a6"/><path d="M35 65l-5 15M50 65l-5 15M65 65l-5 15" /></svg>`,
+            'storm': `<svg viewBox="0 0 100 100" fill="none" stroke="#f1c40f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M25 50a15 15 0 0 1 0-30 18 18 0 0 1 35-10 18 18 0 0 1 15 35h-50z" stroke="#555"/><path d="M45 60l-10 15h10l-5 15" /></svg>`,
+            'snow': `<svg viewBox="0 0 100 100" fill="none" stroke="#a29bfe" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M50 20v60M20 50h60M28 28l44 44M28 72l44-44" /></svg>`
+        };
+
         const categoryStyles = {
-            'transport':   { border: '#8fa3ad', bg: '#f0f4f6' }, // 藍
-            'sightseeing': { border: '#c0392b', bg: '#fdedec' }, // 磚紅 (新)
-            'food':        { border: '#e0cc9e', bg: '#fbf8f1' }, // 黃
-            'shopping':    { border: '#d8b8b8', bg: '#f9f4f4' }, // 粉
-            'hotel':       { border: '#8d6e63', bg: '#efebe9' }, // 咖啡 (新)
-            'other':       { border: '#d1d1d1', bg: '#f9f9f9' }  // 灰
+            'transport':   { border: '#8fa3ad', bg: '#f0f4f6' }, 
+            'sightseeing': { border: '#c0392b', bg: '#fdedec' }, // 磚紅
+            'food':        { border: '#e0cc9e', bg: '#fbf8f1' }, 
+            'shopping':    { border: '#d8b8b8', bg: '#f9f4f4' }, 
+            'hotel':       { border: '#8d6e63', bg: '#efebe9' }, // 咖啡
+            'other':       { border: '#d1d1d1', bg: '#f9f9f9' }
         };
 
         const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -238,18 +264,18 @@
         let appData = {
             view: 'itinerary',
             currentDayIdx: 0,
-            days: [{ date: "", weather: "☀️", temp: "", items: [{ id: 1, time: "10:00", category: "transport", location: "成田機場", cost: 0, currency: "JPY", note: "" }] }],
+            days: [{ date: "", weather: "sunny", temp: "", items: [{ id: 1, time: "10:00", category: "transport", location: "成田機場", cost: 0, currency: "JPY", note: "" }] }],
             shoppingList: [ { id: 101, name: "合利他命", shop: "藥妝店", cost: 5500, bought: false, note: "幫媽媽買" } ]
         };
 
         window.onload = () => {
-            const saved = localStorage.getItem('tokyo_trip_v7'); // 使用相同的 Key 以保留舊資料
+            const saved = localStorage.getItem('tokyo_trip_v7');
             if(saved) {
                 try {
                     const parsed = JSON.parse(saved);
                     appData = { ...appData, ...parsed };
                     if(!appData.shoppingList) appData.shoppingList = [];
-                } catch(e) { console.error("Data Load Error", e); }
+                } catch(e) { console.error("Error", e); }
             }
             renderAll();
         };
@@ -290,20 +316,24 @@
 
         function renderItinerary() {
             const day = appData.days[appData.currentDayIdx];
+            // 更新日期與星期
             document.getElementById('dateInput').value = day.date;
-            document.getElementById('weatherSelect').value = day.weather;
-            document.getElementById('tempInput').value = day.temp;
-            document.getElementById('itemCount').innerText = day.items.length;
-            
             const badge = document.getElementById('weekdayBadge');
             if(day.date) {
                 const d = new Date(day.date).getDay();
                 badge.innerText = weekDays[d];
-                badge.style.background = (d===0||d===6) ? '#d8b8b8' : '#ccc';
+                badge.style.color = (d===0||d===6) ? '#d48787' : '#aaa';
             } else {
-                badge.innerText = "---";
-                badge.style.background = '#ccc';
+                badge.innerText = "Date?";
             }
+
+            // 更新手繪天氣與氣溫
+            document.getElementById('weatherSelect').value = day.weather || 'sunny';
+            document.getElementById('tempInput').value = day.temp;
+            
+            // 渲染 SVG 圖示
+            const weatherType = day.weather || 'sunny';
+            document.getElementById('currentWeatherIcon').innerHTML = svgIcons[weatherType] || svgIcons['sunny'];
 
             const list = document.getElementById('tripList');
             list.innerHTML = '';
@@ -315,7 +345,6 @@
                 li.style.borderLeftColor = style.border;
                 li.style.backgroundColor = style.bg;
 
-                // 新的 HTML 結構：時間與地點在第一行
                 li.innerHTML = `
                     <div class="row-main">
                         <input type="time" class="input-time" value="${item.time}" onchange="updItem(${idx}, 'time', this.value)">
@@ -389,14 +418,12 @@
             });
             renderShopping();
             save();
-            alert('購物清單已依商店分類排序！');
+            alert('購物清單已排序！');
         }
 
         async function fetchWeather() {
             const day = appData.days[appData.currentDayIdx];
             if(!day.date) { alert('請先設定日期'); return; }
-            const btn = document.querySelector('.btn-fetch-weather');
-            btn.innerHTML = '⏳';
             const lat = 35.6895; const lon = 139.6917;
             const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max&timezone=Asia%2FTokyo&start_date=${day.date}&end_date=${day.date}`;
             try {
@@ -404,19 +431,19 @@
                 const data = await res.json();
                 if(data.daily && data.daily.weathercode) {
                     const code = data.daily.weathercode[0];
-                    let icon = "☀️";
-                    if(code >= 1 && code <= 3) icon = "☁️";
-                    if(code >= 45 && code <= 48) icon = "🌫️";
-                    if(code >= 51 && code <= 67) icon = "🌧️";
-                    if(code >= 71 && code <= 77) icon = "🌨️";
-                    if(code >= 95) icon = "⛈️";
-                    day.weather = icon;
-                    day.temp = `${data.daily.temperature_2m_max[0]}°C`;
+                    let type = "sunny";
+                    if(code >= 1 && code <= 3) type = "cloudy";
+                    if(code >= 45 && code <= 48) type = "cloudy";
+                    if(code >= 51 && code <= 67) type = "rainy";
+                    if(code >= 71 && code <= 77) type = "snow";
+                    if(code >= 95) type = "storm";
+                    
+                    day.weather = type;
+                    day.temp = `${data.daily.temperature_2m_max[0]}°`;
                     renderAll();
-                    alert(`更新成功: ${icon} ${day.temp}`);
-                } else { alert('目前查無此日期的預報資料(僅限14天內)'); }
+                    alert(`天氣已更新！`);
+                } else { alert('查無此日期資料 (僅限14天內)'); }
             } catch(e) { alert('連線失敗'); } 
-            finally { btn.innerHTML = '🔄'; }
         }
 
         function renderBottomBarItinerary() {
@@ -434,9 +461,19 @@
         function addItem() { appData.days[appData.currentDayIdx].items.push({id:Date.now(), time:"10:00", category:"other", location:"", cost:0, currency:"JPY", note:""}); renderAll(); }
         function updItem(i, k, v) { appData.days[appData.currentDayIdx].items[i][k] = v; renderAll(); }
         function delItem(i) { if(confirm('刪除?')) { appData.days[appData.currentDayIdx].items.splice(i,1); renderAll(); } }
-        function addDay() { appData.days.push({date:"", weather:"☀️", temp:"", items:[]}); appData.currentDayIdx = appData.days.length-1; renderAll(); }
+        function addDay() { appData.days.push({date:"", weather:"sunny", temp:"", items:[]}); appData.currentDayIdx = appData.days.length-1; renderAll(); }
         function updateDate() { appData.days[appData.currentDayIdx].date = document.getElementById('dateInput').value; renderAll(); }
-        function updateWeather() { appData.days[appData.currentDayIdx].weather = document.getElementById('weatherSelect').value; appData.days[appData.currentDayIdx].temp = document.getElementById('tempInput').value; save(); }
+        
+        // 更新天氣 (手動選擇)
+        function updateWeather() { 
+            appData.days[appData.currentDayIdx].weather = document.getElementById('weatherSelect').value; 
+            appData.days[appData.currentDayIdx].temp = document.getElementById('tempInput').value; 
+            save(); 
+            // 立即重繪圖示
+            const type = document.getElementById('weatherSelect').value;
+            document.getElementById('currentWeatherIcon').innerHTML = svgIcons[type] || svgIcons['sunny'];
+        }
+
         function addShop() { appData.shoppingList.push({id:Date.now(), name:"", shop:"", cost:0, bought:false, note:""}); renderAll(); }
         function toggleShop(i) { appData.shoppingList[i].bought = !appData.shoppingList[i].bought; renderAll(); }
         function updShop(i, k, v) { appData.shoppingList[i][k] = v; renderAll(); }

@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tokyo Trip v8.0 | Japanese Vibe</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <title>Tokyo Trip v9.0 | Pro Layout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Oswald:wght@500&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* 移除原本的純色背景變數，改用圖片 */
-            /* --bg-color: #f7f7f5; */
-            --text-main: #585858;
-            --text-light: #949494;
+            --text-main: #4a4a4a;
+            --text-light: #888;
             --primary-btn: #7a8b99;
             --danger: #d48787;
             --shopping-check: #20bf6b;
@@ -26,20 +24,18 @@
             display: flex; justify-content: center;
             min-height: 100vh;
 
-            /* === ✨ 新增日本氛圍背景 ✨ === */
-            /* 使用 linear-gradient 疊加一層半透明濾鏡，讓背景變淡，確保文字清晰 */
+            /* 日本氛圍背景 */
             background-image: 
                 linear-gradient(to bottom, rgba(247, 247, 245, 0.85), rgba(247, 247, 245, 0.95)),
-                url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop'); /* 日本街道塔樓照片 */
-            
-            background-size: cover;     /* 讓照片充滿整個螢幕 */
-            background-position: center; /* 照片居中對齊 */
-            background-attachment: fixed; /* 背景固定，滑動時產生高級感 */
+                url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .container { width: 100%; max-width: 600px; padding-bottom: 120px; }
 
-        /* 導航切換 */
+        /* 導航 */
         .nav-switch { display: flex; background: rgba(230, 230, 230, 0.8); backdrop-filter: blur(5px); border-radius: 30px; padding: 5px; margin-bottom: 20px; }
         .nav-btn { flex: 1; padding: 10px; border: none; background: transparent; border-radius: 25px; font-weight: bold; color: #999; cursor: pointer; transition: 0.3s; }
         .nav-btn.active { background: white; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
@@ -51,55 +47,97 @@
         .view-section { display: none; }
         .view-section.active { display: block; }
 
-        /* 天數 Tabs */
+        /* Tabs */
         .tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; scrollbar-width: none; }
-        .tabs::-webkit-scrollbar { display: none; }
         .tab-btn { background: rgba(230, 230, 230, 0.8); color: #999; border: none; padding: 8px 16px; border-radius: 20px; white-space: nowrap; cursor: pointer; backdrop-filter: blur(5px); }
         .tab-btn.active { background: var(--primary-btn); color: white; }
 
-        /* 資訊卡片 (增加一點透明度和毛玻璃感) */
+        /* 資訊卡 */
         .day-info-card {
             background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 15px 20px; margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; backdrop-filter: blur(10px);
         }
         .info-row { display: flex; justify-content: space-between; align-items: center; }
-        
         .date-wrapper { display: flex; align-items: center; gap: 8px; }
         .input-date { border: none; background: #f0f2f4; padding: 5px 10px; border-radius: 8px; font-family: 'Playfair Display', serif; font-size: 1rem; width: 140px; }
         .weekday-badge { font-size: 0.8rem; background: #d8b8b8; color: white; padding: 4px 8px; border-radius: 6px; }
-
         .weather-control { display: flex; gap: 8px; align-items: center; }
-        .btn-fetch-weather { background: #f0f2f4; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; font-size: 14px; }
+        .btn-fetch-weather { background: #f0f2f4; border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; }
 
         .list-container { list-style: none; padding: 0; margin: 0; }
-        
-        /* 行程卡片 (彩色版，增加輕微透明感) */
+
+        /* === 9.0 行程卡片新設計 === */
         .trip-item {
-            background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 15px; margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 16px; margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative; 
-            border-left: 6px solid #ddd; transition: transform 0.2s;
-            backdrop-filter: blur(5px);
+            border-left: 6px solid #ddd; transition: transform 0.2s; backdrop-filter: blur(5px);
         }
-        .trip-item input, .trip-item select { background: rgba(240, 242, 244, 0.7); border-radius: 4px; }
-        .note-box { background: rgba(240, 242, 244, 0.7); padding: 5px 10px; border-radius: 8px; margin-top: 5px; }
+        
+        /* 第一行：時間 + 地點 (並排) */
+        .row-main {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+        }
+        .input-time {
+            font-family: 'Oswald', sans-serif; /* 數字專用字型 */
+            font-size: 1.4rem; 
+            font-weight: 500;
+            color: var(--text-main);
+            width: 65px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            margin-top: 2px; /* 微調對齊 */
+        }
+        .input-location {
+            flex-grow: 1;
+            font-size: 1.3rem; /* 放大字體 */
+            font-weight: 700;  /* 加粗 */
+            color: #2c3e50;
+            border: none;
+            background: transparent;
+            border-bottom: 1px dashed transparent;
+            transition: 0.3s;
+            padding: 2px 0;
+        }
+        .input-location:focus { border-bottom-color: var(--primary-btn); }
+        .btn-delete {
+            color: #e0e0e0; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 0 0 10px;
+        }
+        .btn-delete:hover { color: var(--danger); }
+
+        /* 第二行：分類 + 地圖 + 備註 + 金額 */
+        .row-meta {
+            display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+        }
+        .select-category {
+            font-size: 0.8rem; padding: 4px 8px; border-radius: 6px; border: none;
+            background: rgba(0,0,0,0.05); color: #666; font-weight: 500; cursor: pointer;
+        }
+        .btn-map {
+            background: none; border: 1px solid #eee; border-radius: 50%; 
+            width: 28px; height: 28px; cursor: pointer; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .note-wrapper {
+            flex-grow: 1; display: flex; align-items: center; background: rgba(0,0,0,0.03); 
+            border-radius: 8px; padding: 4px 10px; gap: 5px;
+        }
+        .input-note { width: 100%; border: none; background: transparent; font-size: 0.9rem; color: #666; }
+        .cost-group { display: flex; align-items: center; gap: 2px; }
+        .input-cost-sm { width: 50px; border: none; background: transparent; text-align: right; font-size: 0.9rem; font-weight: 500; }
+        .select-currency-sm { border: none; background: transparent; font-size: 0.7rem; color: #999; }
 
         /* 購物清單 */
         .shopping-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .btn-sort { background: var(--shop-tag-bg); color: var(--text-main); border: none; padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; cursor: pointer; }
-
         .shop-item {
             background: rgba(255, 255, 255, 0.98); border-radius: 16px; padding: 15px; margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); display: flex; align-items: flex-start; gap: 10px;
             position: relative; transition: opacity 0.3s; backdrop-filter: blur(5px);
         }
-        .shop-checkbox {
-            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; margin-top: 2px;
-        }
+        .shop-checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ddd; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; margin-top: 2px; }
         .shop-checkbox.checked { background: var(--shopping-check); border-color: var(--shopping-check); }
         .shop-content { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-        
         .shop-tag-wrapper { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .input-shop { background: var(--shop-tag-bg); border: none; border-radius: 4px; padding: 2px 8px; font-size: 0.85rem; color: #555; width: 100px; font-weight: 500; }
         .shop-name { width: 100%; border: none; font-size: 1.05rem; font-weight: 500; color: var(--text-main); }
@@ -107,12 +145,7 @@
         .shop-item.completed { opacity: 0.5; }
         .shop-item.completed .shop-name { text-decoration: line-through; }
 
-        /* 輸入框通用 */
-        input, select { color: var(--text-main); font-family: inherit; border: 1px solid transparent; }
-        input:focus { border-bottom: 1px solid var(--primary-btn); }
-        .input-cost-sm { width: 60px; border: none; border-bottom: 1px dashed #999; text-align: right; background: transparent !important;}
-        
-        /* 底部按鈕 (增加毛玻璃感) */
+        /* 底部按鈕 */
         .bottom-bar {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px);
@@ -120,14 +153,6 @@
             display: flex; gap: 15px; z-index: 100; border: 1px solid rgba(255,255,255,0.3);
         }
         .action-btn { background: var(--primary-btn); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 500; cursor: pointer; box-shadow: 0 5px 15px rgba(122, 139, 153, 0.3); }
-
-        /* 行程細節 */
-        .item-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .input-time { border: none; font-family: 'Playfair Display'; font-weight: bold; width: 60px; font-size: 1.1rem; background: transparent !important; }
-        .btn-delete { position: absolute; top: 10px; right: 10px; border: none; background: none; color: #999; font-size: 1.2rem; cursor: pointer; z-index: 10; }
-        .btn-delete:hover { color: var(--danger); }
-        .input-location { width: 100%; border: none; font-weight: 500; font-size: 1rem; background: transparent !important; }
-        .btn-map { background: rgba(255,255,255,0.8); border:none; border-radius:50%; width:30px; height:30px; cursor:pointer; color: var(--primary-btn); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
 
         .total-display { text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 30px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
         .total-display b { color: var(--text-main); font-size: 1rem; margin: 0 5px; }
@@ -182,12 +207,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="shopping-header">
                 <span style="font-size:0.9rem; font-weight:bold; color:#aaa; text-shadow: 0 1px 2px rgba(255,255,255,0.8);">ITEMS</span>
                 <button class="btn-sort" onclick="sortShopping()">📂 按商店分類</button>
             </div>
-
             <ul id="shopList" class="list-container"></ul>
         </div>
 
@@ -200,13 +223,13 @@
     <div class="bottom-bar" id="bottomBar"></div>
 
     <script>
-        // === 1. 設定 & 資料 ===
+        // === 1. 色彩設定 (更新: 咖啡色飯店、磚紅色景點) ===
         const categoryStyles = {
             'transport':   { border: '#8fa3ad', bg: '#f0f4f6' }, // 藍
-            'sightseeing': { border: '#a7bfa0', bg: '#f1f6f0' }, // 綠
+            'sightseeing': { border: '#c0392b', bg: '#fdedec' }, // 磚紅 (新)
             'food':        { border: '#e0cc9e', bg: '#fbf8f1' }, // 黃
             'shopping':    { border: '#d8b8b8', bg: '#f9f4f4' }, // 粉
-            'hotel':       { border: '#bfaec2', bg: '#f7f4f8' }, // 紫
+            'hotel':       { border: '#8d6e63', bg: '#efebe9' }, // 咖啡 (新)
             'other':       { border: '#d1d1d1', bg: '#f9f9f9' }  // 灰
         };
 
@@ -219,9 +242,8 @@
             shoppingList: [ { id: 101, name: "合利他命", shop: "藥妝店", cost: 5500, bought: false, note: "幫媽媽買" } ]
         };
 
-        // === 2. 初始化 ===
         window.onload = () => {
-            const saved = localStorage.getItem('tokyo_trip_v7');
+            const saved = localStorage.getItem('tokyo_trip_v7'); // 使用相同的 Key 以保留舊資料
             if(saved) {
                 try {
                     const parsed = JSON.parse(saved);
@@ -232,7 +254,6 @@
             renderAll();
         };
 
-        // === 3. 視圖切換 ===
         function switchView(viewName) {
             appData.view = viewName;
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -255,7 +276,6 @@
             save();
         }
 
-        // === 4. 行程表渲染 ===
         function renderTabs() {
             const c = document.getElementById('dayTabs');
             c.innerHTML = '';
@@ -291,16 +311,20 @@
                 const li = document.createElement('li');
                 li.className = 'trip-item';
                 
-                // 套用彩色樣式
                 const style = categoryStyles[item.category] || categoryStyles['other'];
                 li.style.borderLeftColor = style.border;
                 li.style.backgroundColor = style.bg;
 
+                // 新的 HTML 結構：時間與地點在第一行
                 li.innerHTML = `
-                    <button class="btn-delete" onclick="delItem(${idx})">×</button>
-                    <div class="item-header">
+                    <div class="row-main">
                         <input type="time" class="input-time" value="${item.time}" onchange="updItem(${idx}, 'time', this.value)">
-                        <select onchange="updItem(${idx}, 'category', this.value)" style="font-size:0.8rem; border:none; background:rgba(255,255,255,0.5); padding:2px 5px; border-radius:4px;">
+                        <input type="text" class="input-location" value="${item.location}" placeholder="地點名稱" onchange="updItem(${idx}, 'location', this.value)">
+                        <button class="btn-delete" onclick="delItem(${idx})">×</button>
+                    </div>
+
+                    <div class="row-meta">
+                        <select class="select-category" onchange="updItem(${idx}, 'category', this.value)">
                             <option value="transport" ${item.category=='transport'?'selected':''}>交通</option>
                             <option value="sightseeing" ${item.category=='sightseeing'?'selected':''}>景點</option>
                             <option value="food" ${item.category=='food'?'selected':''}>美食</option>
@@ -308,26 +332,26 @@
                             <option value="hotel" ${item.category=='hotel'?'selected':''}>飯店</option>
                             <option value="other" ${item.category=='other'?'selected':''}>其他</option>
                         </select>
-                    </div>
-                    <div style="display:flex; gap:5px; margin-bottom:8px;">
-                        <input type="text" class="input-location" value="${item.location}" placeholder="地點名稱" onchange="updItem(${idx}, 'location', this.value)">
+                        
                         <button class="btn-map" onclick="openMap('${item.location}')">📍</button>
-                    </div>
-                    <div class="note-box" style="display:flex; gap:5px; align-items:center;">
-                        <span style="font-size:0.8rem;">¥</span>
-                        <input type="number" class="input-cost-sm" value="${item.cost}" placeholder="0" onchange="updItem(${idx}, 'cost', this.value)">
-                        <select onchange="updItem(${idx}, 'currency', this.value)" style="border:none; background:transparent; font-size:0.7rem;">
-                            <option value="JPY" ${item.currency=='JPY'?'selected':''}>JPY</option>
-                            <option value="TWD" ${item.currency=='TWD'?'selected':''}>TWD</option>
-                        </select>
-                        <input type="text" value="${item.note}" placeholder="備註..." style="flex:1; border:none; background:transparent; font-size:0.9rem;" onchange="updItem(${idx}, 'note', this.value)">
+                        
+                        <div class="note-wrapper">
+                            <input type="text" class="input-note" value="${item.note}" placeholder="備註..." onchange="updItem(${idx}, 'note', this.value)">
+                            <div class="cost-group">
+                                <span style="font-size:0.8rem; color:#aaa;">¥</span>
+                                <input type="number" class="input-cost-sm" value="${item.cost}" placeholder="0" onchange="updItem(${idx}, 'cost', this.value)">
+                                <select class="select-currency-sm" onchange="updItem(${idx}, 'currency', this.value)">
+                                    <option value="JPY" ${item.currency=='JPY'?'selected':''}>JPY</option>
+                                    <option value="TWD" ${item.currency=='TWD'?'selected':''}>TWD</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 `;
                 list.appendChild(li);
             });
         }
 
-        // === 5. 購物清單渲染 ===
         function renderShopping() {
             const list = document.getElementById('shopList');
             list.innerHTML = '';
@@ -357,7 +381,6 @@
             document.getElementById('shopTotal').innerText = shopTotal.toLocaleString();
         }
 
-        // === 6. 功能函式 ===
         function sortShopping() {
             appData.shoppingList.sort((a, b) => {
                 if(a.bought !== b.bought) return a.bought ? 1 : -1;
@@ -396,7 +419,6 @@
             finally { btn.innerHTML = '🔄'; }
         }
 
-        // 底部按鈕渲染
         function renderBottomBarItinerary() {
             document.getElementById('bottomBar').innerHTML = `
                 <button class="action-btn" onclick="addItem()">+ Add Item</button>
@@ -409,20 +431,16 @@
             `;
         }
 
-        // 資料增刪改
         function addItem() { appData.days[appData.currentDayIdx].items.push({id:Date.now(), time:"10:00", category:"other", location:"", cost:0, currency:"JPY", note:""}); renderAll(); }
         function updItem(i, k, v) { appData.days[appData.currentDayIdx].items[i][k] = v; renderAll(); }
         function delItem(i) { if(confirm('刪除?')) { appData.days[appData.currentDayIdx].items.splice(i,1); renderAll(); } }
-        
         function addDay() { appData.days.push({date:"", weather:"☀️", temp:"", items:[]}); appData.currentDayIdx = appData.days.length-1; renderAll(); }
         function updateDate() { appData.days[appData.currentDayIdx].date = document.getElementById('dateInput').value; renderAll(); }
         function updateWeather() { appData.days[appData.currentDayIdx].weather = document.getElementById('weatherSelect').value; appData.days[appData.currentDayIdx].temp = document.getElementById('tempInput').value; save(); }
-
         function addShop() { appData.shoppingList.push({id:Date.now(), name:"", shop:"", cost:0, bought:false, note:""}); renderAll(); }
         function toggleShop(i) { appData.shoppingList[i].bought = !appData.shoppingList[i].bought; renderAll(); }
         function updShop(i, k, v) { appData.shoppingList[i][k] = v; renderAll(); }
         function delShop(i) { if(confirm('刪除商品?')) { appData.shoppingList.splice(i,1); renderAll(); } }
-
         function calcTotal() {
             let jpy = 0; let twd = 0;
             appData.days.forEach(d => d.items.forEach(i => {
@@ -433,15 +451,7 @@
             document.getElementById('totalJpy').innerText = jpy.toLocaleString();
             document.getElementById('totalTwd').innerText = twd.toLocaleString();
         }
-
-        // 地圖功能
-        function openMap(loc) { 
-            if(loc) {
-                const url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc);
-                window.open(url, '_blank');
-            }
-        }
-        
+        function openMap(loc) { if(loc) window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(loc), '_blank'); }
         function save() { localStorage.setItem('tokyo_trip_v7', JSON.stringify(appData)); }
     </script>
 </body>

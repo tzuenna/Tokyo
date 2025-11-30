@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tokyo Trip v10.0 | Hand-Drawn Style</title>
+    <title>Tokyo Trip v10.1 | Time Fix</title>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -23,7 +23,7 @@
             margin: 0; padding: 20px;
             display: flex; justify-content: center;
             min-height: 100vh;
-            /* 背景圖：日本街道日落 */
+            /* 背景圖 */
             background-image: 
                 linear-gradient(to bottom, rgba(247, 247, 245, 0.85), rgba(247, 247, 245, 0.95)),
                 url('https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop');
@@ -49,11 +49,10 @@
         .tab-btn { background: rgba(230, 230, 230, 0.8); color: #999; border: none; padding: 8px 16px; border-radius: 20px; white-space: nowrap; cursor: pointer; backdrop-filter: blur(5px); }
         .tab-btn.active { background: var(--primary-btn); color: white; }
 
-        /* === 資訊卡片 (手繪風改版區域) === */
+        /* === 資訊卡片 === */
         .day-info-card {
             background: rgba(255, 255, 255, 0.95); border-radius: 20px; padding: 15px 20px; margin-bottom: 20px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.05); backdrop-filter: blur(10px);
-            /* 改為水平排列 */
             display: flex; flex-direction: row; justify-content: space-between; align-items: center;
         }
 
@@ -65,8 +64,7 @@
             font-size: 1.5rem; font-weight: 600; color: #2c3e50; width: 155px;
         }
         .weekday-badge { 
-            font-family: 'Caveat', cursive; /* 手寫字型 */
-            font-size: 1.2rem; color: #aaa; margin-left: 5px;
+            font-family: 'Caveat', cursive; font-size: 1.2rem; color: #aaa; margin-left: 5px;
         }
 
         /* 右側：手繪天氣 */
@@ -82,13 +80,10 @@
             width: 50px; border: none; background: transparent; 
             font-family: 'Caveat', cursive; font-size: 1.4rem; color: #666; text-align: right;
         }
-        
-        /* 隱藏原本的 select，改用透明覆蓋在圖案上 */
         .weather-select-hidden {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;
         }
 
-        /* 列表容器 */
         .list-container { list-style: none; padding: 0; margin: 0; }
 
         /* === 行程卡片 === */
@@ -99,14 +94,15 @@
         }
         
         /* 時間 + 地點 */
-        .row-main { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+        .row-main { display: flex; align-items: center; gap: 5px; margin-bottom: 10px; }
         
-        /* === 24小時制優化 === */
+        /* === 時間欄位寬度修正 === */
         .input-time {
             font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 500;
-            color: var(--text-main); width: 60px; border: none; background: transparent; padding: 0;
+            color: var(--text-main);
+            width: 85px; /* 原本60px -> 改為85px */
+            border: none; background: transparent; padding: 0; margin-right: 5px;
         }
-        /* 嘗試隱藏瀏覽器預設的 AM/PM (針對 Webkit 核心) */
         .input-time::-webkit-datetime-edit-ampm-field { display: none; }
         
         .input-location {
@@ -163,9 +159,6 @@
             display: flex; gap: 15px; z-index: 100; border: 1px solid rgba(255,255,255,0.3);
         }
         .action-btn { background: var(--primary-btn); color: white; border: none; padding: 12px 24px; border-radius: 30px; font-weight: 500; cursor: pointer; box-shadow: 0 5px 15px rgba(122, 139, 153, 0.3); }
-        
-        /* 隱藏更新按鈕 (因為現在可以直接點圖示) */
-        .btn-fetch-hidden { position: absolute; opacity: 0; pointer-events: none; }
         
         /* 總計 */
         .total-display { text-align: center; color: var(--text-light); font-size: 0.8rem; margin-top: 30px; text-shadow: 0 1px 2px rgba(255,255,255,0.8); }
@@ -240,8 +233,7 @@
     <div class="bottom-bar" id="bottomBar"></div>
 
     <script>
-        // === 手繪風格 SVG 圖示庫 (Base64) ===
-        // 這些是我為你設計的手繪感圖案，直接嵌入代碼，不需要外部圖片
+        // 手繪風格 SVG
         const svgIcons = {
             'sunny': `<svg viewBox="0 0 100 100" fill="none" stroke="#f39c12" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="20" /><path d="M50 15v-10M50 95v-10M15 50H5M95 50H85M25 25L18 18M82 82l-7-7M25 75l-7 7M82 18l-7 7" /></svg>`,
             'cloudy': `<svg viewBox="0 0 100 100" fill="none" stroke="#95a5a6" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M25 60a15 15 0 0 1 0-30 18 18 0 0 1 35-10 18 18 0 0 1 15 35h-50z" /></svg>`,
@@ -252,10 +244,10 @@
 
         const categoryStyles = {
             'transport':   { border: '#8fa3ad', bg: '#f0f4f6' }, 
-            'sightseeing': { border: '#c0392b', bg: '#fdedec' }, // 磚紅
+            'sightseeing': { border: '#c0392b', bg: '#fdedec' }, 
             'food':        { border: '#e0cc9e', bg: '#fbf8f1' }, 
             'shopping':    { border: '#d8b8b8', bg: '#f9f4f4' }, 
-            'hotel':       { border: '#8d6e63', bg: '#efebe9' }, // 咖啡
+            'hotel':       { border: '#8d6e63', bg: '#efebe9' }, 
             'other':       { border: '#d1d1d1', bg: '#f9f9f9' }
         };
 
@@ -316,7 +308,6 @@
 
         function renderItinerary() {
             const day = appData.days[appData.currentDayIdx];
-            // 更新日期與星期
             document.getElementById('dateInput').value = day.date;
             const badge = document.getElementById('weekdayBadge');
             if(day.date) {
@@ -327,11 +318,8 @@
                 badge.innerText = "Date?";
             }
 
-            // 更新手繪天氣與氣溫
             document.getElementById('weatherSelect').value = day.weather || 'sunny';
             document.getElementById('tempInput').value = day.temp;
-            
-            // 渲染 SVG 圖示
             const weatherType = day.weather || 'sunny';
             document.getElementById('currentWeatherIcon').innerHTML = svgIcons[weatherType] || svgIcons['sunny'];
 
@@ -340,7 +328,6 @@
             day.items.forEach((item, idx) => {
                 const li = document.createElement('li');
                 li.className = 'trip-item';
-                
                 const style = categoryStyles[item.category] || categoryStyles['other'];
                 li.style.borderLeftColor = style.border;
                 li.style.backgroundColor = style.bg;
@@ -361,9 +348,7 @@
                             <option value="hotel" ${item.category=='hotel'?'selected':''}>飯店</option>
                             <option value="other" ${item.category=='other'?'selected':''}>其他</option>
                         </select>
-                        
                         <button class="btn-map" onclick="openMap('${item.location}')">📍</button>
-                        
                         <div class="note-wrapper">
                             <input type="text" class="input-note" value="${item.note}" placeholder="備註..." onchange="updItem(${idx}, 'note', this.value)">
                             <div class="cost-group">
@@ -464,12 +449,10 @@
         function addDay() { appData.days.push({date:"", weather:"sunny", temp:"", items:[]}); appData.currentDayIdx = appData.days.length-1; renderAll(); }
         function updateDate() { appData.days[appData.currentDayIdx].date = document.getElementById('dateInput').value; renderAll(); }
         
-        // 更新天氣 (手動選擇)
         function updateWeather() { 
             appData.days[appData.currentDayIdx].weather = document.getElementById('weatherSelect').value; 
             appData.days[appData.currentDayIdx].temp = document.getElementById('tempInput').value; 
             save(); 
-            // 立即重繪圖示
             const type = document.getElementById('weatherSelect').value;
             document.getElementById('currentWeatherIcon').innerHTML = svgIcons[type] || svgIcons['sunny'];
         }
